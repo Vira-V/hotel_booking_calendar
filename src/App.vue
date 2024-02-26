@@ -1,17 +1,16 @@
 <template>
   <div id="app">
-    <img alt="Vue logo" src="./assets/logo.png">
-    <HotelBookingCalendar msg="Welcome to Your Vue.js App"/>
+    <BookingCalendar/>
   </div>
 </template>
 
 <script>
-import HotelBookingCalendar from './components/HotelBookingCalendar.vue'
+import BookingCalendar from './components/BookingCalendar.vue'
 
 export default {
   name: 'App',
   components: {
-    HotelBookingCalendar,
+    BookingCalendar,
   }
 }
 </script>
