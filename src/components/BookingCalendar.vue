@@ -4,14 +4,14 @@
       <thead>
         <tr>
           <th></th>
-          <th v-for="day in daysOfWeek" :key="day">{{ day }}</th>
+          <th v-for="date in dates" :key="date">{{ date }}</th>
         </tr>
       </thead>
       <tbody>
         <tr v-for="apartment in apartments" :key="apartment.id">
           <td>{{ apartment.roomDetails.name }}</td>
-          <td v-for="day in daysOfWeek" :key="day" class="reservation-cell">
-            <div v-for="reservation in getReservationsForDay(apartment.id, day)" :key="reservation.id" class="reservation" :style="calculateReservationStyle(reservation)">
+          <td v-for="date in dates" :key="date" class="reservation-cell">
+            <div v-for="reservation in getReservationsForDay(apartment.id, date)" :key="reservation.id" class="reservation" :style="calculateReservationStyle(reservation)">
               {{ reservation.roomDetails.name }}
             </div>
           </td>
@@ -29,24 +29,34 @@ export default {
     apartments() {
       return reservationData;
     },
-    daysOfWeek() {
-      return ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+    dates() {
+      const today = new Date();
+      const startOfWeek = new Date(today);
+      startOfWeek.setDate(today.getDate() - today.getDay());
+
+      const dates = [];
+      for (let i = 0; i < 7; i++) {
+        const date = new Date(startOfWeek);
+        date.setDate(startOfWeek.getDate() + i);
+        dates.push(date.toISOString().slice(0, 10));
+      }
+      return dates;
     }
   },
   methods: {
-    getReservationsForDay(apartmentId, day) {
+    getReservationsForDay(apartmentId, date) {
       const reservations = [];
       return reservations.filter(reservation => {
         const start = new Date(reservation.start);
-        const end = new Date(reservation.end);
-        return start <= day && day <= end;
+        // const end = new Date(reservation.end);
+        return start.toLocaleDateString('en-US') === date;
       });
     },
     calculateReservationStyle(reservation) {
       const start = new Date(reservation.start);
       const end = new Date(reservation.end);
       const durationInDays = (end - start) / (1000 * 60 * 60 * 24) + 1;
-      const dayIndex = this.daysOfWeek.indexOf(start.toLocaleDateString('en-US', { weekday: 'short' }));
+      const dayIndex = this.dates.indexOf(start.toLocaleDateString('en-US'));
 
       return {
         width: `${durationInDays * 100}%`,
