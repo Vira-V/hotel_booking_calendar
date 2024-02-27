@@ -13,11 +13,17 @@
         </tr>
       </thead>
       <tbody>
-        <tr v-for="apartment in apartments" :key="apartment.id">
+        <tr v-for="apartment in filteredApartments" :key="apartment.id">
           <td>{{ apartment.roomDetails.name }}</td>
           <td v-for="date in dates" :key="date" class="reservation-cell">
-            <div v-for="reservation in getReservationsForDay(apartment.id, date)" :key="reservation.id" class="reservation" :style="calculateReservationStyle(reservation)">
-              {{ reservation.roomDetails.name }}
+            <div class="reservations-container">
+              <div
+                v-for="reservation in getReservationsForDay(apartment.id, date)"
+                :key="reservation.id"
+                class="reservation"
+              >
+                {{ reservation.name }}
+              </div>
             </div>
           </td>
         </tr>
@@ -27,7 +33,7 @@
 </template>
 
 <script>
-import reservationData from './bookings.json';
+import reservationData from "./bookings.json";
 
 export default {
   computed: {
@@ -62,30 +68,18 @@ export default {
   methods: {
     getReservationsForDay(apartmentId, date) {
       const reservations = [];
-      return reservations.filter(reservation => {
+      return reservations.filter((reservation) => {
         const start = new Date(reservation.start);
-        // const end = new Date(reservation.end);
-        return start.toLocaleDateString('en-US') === date;
+        return start.toLocaleDateString("en-US") === date;
       });
-    },
-    calculateReservationStyle(reservation) {
-      const start = new Date(reservation.start);
-      const end = new Date(reservation.end);
-      const durationInDays = (end - start) / (1000 * 60 * 60 * 24) + 1;
-      const dayIndex = this.dates.indexOf(start.toLocaleDateString('en-US'));
-
-      return {
-        width: `${durationInDays * 100}%`,
-        marginLeft: `${dayIndex * 100}%`,
-      };
     },
     moveWeek(amount) {
       const newDate = new Date(this.currentWeekStart);
       newDate.setDate(newDate.getDate() + amount * 7);
-      this.$store.dispatch('updateCurrentWeekStart', newDate);
+      this.$store.dispatch("updateCurrentWeekStart", newDate);
     },
     goToToday() {
-      this.$store.dispatch('updateCurrentWeekStart', new Date());
+      this.$store.dispatch("updateCurrentWeekStart", new Date());
     },
   },
 };
@@ -97,11 +91,13 @@ export default {
   position: relative;
 }
 
+.reservations-container {
+  position: relative;
+}
+
 .reservation {
-  border: 1px solid #000;
-  padding: 4px;
-  margin: 2px;
-  background-color: #c0c0c0;
+  padding: 6px;
+  top: 0;
   position: absolute;
   white-space: nowrap;
   overflow: hidden;
@@ -113,7 +109,7 @@ export default {
   gap: 10px;
 }
 
-.reservation-buttons button{
+.reservation-buttons button {
   background-color: #000;
   font-size: 14px;
   color: white;
@@ -121,7 +117,7 @@ export default {
   transition: all 0.3s;
 }
 
-.reservation-buttons button:hover{
+.reservation-buttons button:hover {
   color: #000;
   background-color: white;
   cursor: pointer;
