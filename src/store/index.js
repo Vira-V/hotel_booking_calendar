@@ -6,9 +6,11 @@ Vue.use(Vuex);
 export default new Vuex.Store({
   state: {
     currentWeekStart: new Date(),
+    reservations: [],
   },
   getters: {
     getCurrentWeekStart: (state) => state.currentWeekStart,
+    getReservations: (state) => state.reservations,
   },
   mutations: {
     setCurrentWeekStart: (state, newDate) => {
@@ -18,6 +20,9 @@ export default new Vuex.Store({
   actions: {
     updateCurrentWeekStart: ({ commit }, newDate) => {
       commit('setCurrentWeekStart', newDate);
+    },
+    updateReservations: ({ commit }, reservations) => {
+      commit('setReservations', reservations);
     },
   },
   modules: {

@@ -9,7 +9,8 @@
       <thead>
         <tr>
           <th></th>
-          <th v-for="date in dates" :key="date">{{ date }}</th>
+          <th v-for="date in dates" :key="date" :class="{ 'current-day': isCurrentDay(date) }">{{ date }}</th>
+
         </tr>
       </thead>
       <tbody>
@@ -41,15 +42,17 @@ export default {
       return reservationData;
     },
     dates() {
-      const startOfWeek = new Date(this.currentWeekStart);
-      const dates = [];
-      for (let i = 0; i < 7; i++) {
-        const date = new Date(startOfWeek);
-        date.setDate(startOfWeek.getDate() + i);
-        dates.push(date.toISOString().slice(0, 10));
-      }
-      return dates;
-    },
+  const startOfWeek = new Date(this.currentWeekStart);
+  startOfWeek.setDate(startOfWeek.getDate() - startOfWeek.getDay() + 1);
+
+  const dates = [];
+  for (let i = 0; i < 7; i++) {
+    const date = new Date(startOfWeek);
+    date.setDate(startOfWeek.getDate() + i);
+    dates.push(date.toISOString().slice(0, 10));
+  }
+  return dates;
+},
     filteredApartments() {
       const startOfWeek = new Date(this.dates[0]);
       const endOfWeek = new Date(this.dates[this.dates.length - 1]);
@@ -66,6 +69,10 @@ export default {
     },
   },
   methods: {
+    isCurrentDay(date) {
+    const currentDate = new Date();
+    return date === currentDate.toISOString().slice(0, 10);
+  },
     getReservationsForDay(apartmentId, date) {
       const reservations = [];
       return reservations.filter((reservation) => {
@@ -122,4 +129,8 @@ export default {
   background-color: white;
   cursor: pointer;
 }
+
+th.current-day {
+    background-color: lightgreen;
+  }
 </style>
